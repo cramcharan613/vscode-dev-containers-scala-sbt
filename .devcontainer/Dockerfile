@@ -23,14 +23,23 @@ RUN if [ "${INSTALL_NODE}" = "true" ]; then \
 fi
 
 # [Option] Install sbt
+# [Option] Install sbt
 ARG INSTALL_SBT="true"
+
 RUN if [ "${INSTALL_SBT}" = "true" ]; then \
+    # Add sbt repository
     echo "deb [signed-by=/usr/share/keyrings/sbt-archive-keyring.gpg] https://repo.scala-sbt.org/scalasbt/debian all main" > /etc/apt/sources.list.d/sbt.list && \
+    echo "deb [signed-by=/usr/share/keyrings/sbt-archive-keyring.gpg] https://repo.scala-sbt.org/scalasbt/debian /" > /etc/apt/sources.list.d/sbt_old.list && \
+    # Add the key securely
     curl -fsSL https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823 | gpg --dearmor -o /usr/share/keyrings/sbt-archive-keyring.gpg && \
+    # Update package list and install sbt
     apt-get update && \
     apt-get install -y --no-install-recommends sbt && \
-    apt-get clean -y && rm -rf /var/lib/apt/lists/*; \
+    # Clean up
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*; \
 fi
+
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install --no-install-recommends <your-package-list-here>
